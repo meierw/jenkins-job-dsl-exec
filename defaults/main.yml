@@ -1,0 +1,14 @@
+---
+jenkins_job_dsl_url: http://localhost:8080
+jenkins_job_dsl_user: admin
+jenkins_job_dsl_password: admin
+jenkins_job_dsl_temp_job_name: C4lpe7GMX8S0pdZV6RWbKAkBfKWCPAOgAL9MGL03
+jenkins_job_dsl_content: |
+    job('dsl-example-job') {
+        steps {
+            shell('echo Hello world!')
+        }
+    }
+jenkins_job_dsl_temp_job_run: true
+jenkins_job_dsl_temp_job_delete: true
+jenkins_job_dsl_temp_job_running_checks: 10

@@ -1,0 +1,100 @@
+---
+- name: create/update temporary job, with Job DSL script in it
+  jenkins_script:
+    url: "{{ jenkins_job_dsl_url }}"
+    user: "{{ jenkins_job_dsl_user }}"
+    password: "{{ jenkins_job_dsl_password }}"
+    script: |
+      import jenkins.model.Jenkins
+      import javaposse.jobdsl.plugin.ExecuteDslScripts
+
+      def job = Jenkins.get().getItemByFullName('{{ jenkins_job_dsl_temp_job_name }}')
+      if (job) job.delete()
+
+      def builder = new ExecuteDslScripts()
+      builder.setUseScriptText(true)
+      builder.setScriptText('''{{ jenkins_job_dsl_content }}''')
+
+      job = Jenkins.get().createProject(hudson.model.FreeStyleProject, '{{ jenkins_job_dsl_temp_job_name }}')
+      job.buildersList.add(builder)
+      job.save()
+    
+- block:
+    - name: temporarily disable Job DSL script security for this run
+      jenkins_script:
+        url: "{{ jenkins_job_dsl_url }}"
+        user: "{{ jenkins_job_dsl_user }}"
+        password: "{{ jenkins_job_dsl_password }}"
+        script: |
+          import javaposse.jobdsl.plugin.GlobalJobDslSecurityConfiguration
+          import jenkins.model.GlobalConfiguration
+
+          def jobDslSecConfig = GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class)
+          boolean initialValue = jobDslSecConfig.useScriptSecurity
+          jobDslSecConfig.useScriptSecurity = false
+          print initialValue
+      register: job_dsl_script_security
+    
+    - name: run temp job and execute Job DSL script
+      jenkins_script:
+        url: "{{ jenkins_job_dsl_url }}"
+        user: "{{ jenkins_job_dsl_user }}"
+        password: "{{ jenkins_job_dsl_password }}"
+        script: |
+          import jenkins.model.Jenkins
+
+          def job = Jenkins.get().getItemByFullName('{{ jenkins_job_dsl_temp_job_name }}')
+          job.scheduleBuild()
+
+    - name: wait for temporary job to stop running, before deleting it. polling every second
+      jenkins_script:
+        url: "{{ jenkins_job_dsl_url }}"
+        user: "{{ jenkins_job_dsl_user }}"
+        password: "{{ jenkins_job_dsl_password }}"
+        script: |
+          import jenkins.model.Jenkins
+
+          def job = Jenkins.get().getItemByFullName('{{ jenkins_job_dsl_temp_job_name }}')
+          print (job.isInQueue() || job.isBuilding())
+      register: jenkins_job_dsl_temp_job_is_running
+      until: jenkins_job_dsl_temp_job_is_running.output == 'false'
+      delay: 1
+      retries: "{{ jenkins_job_dsl_temp_job_running_checks }}"
+      ignore_errors: yes
+      when: jenkins_job_dsl_temp_job_delete
+
+    - debug: 
+        msg: >-
+          Temp job not deleted. Timed out while checking for the job to be finished. 
+          Consider raising the amount of jenkins_job_dsl_temp_job_running_checks.
+      when: 
+        - jenkins_job_dsl_temp_job_is_running.output is defined
+        - jenkins_job_dsl_temp_job_is_running.output == 'true'
+
+    - name: delete temporary job
+      jenkins_script:
+        url: "{{ jenkins_job_dsl_url }}"
+        user: "{{ jenkins_job_dsl_user }}"
+        password: "{{ jenkins_job_dsl_password }}"
+        script: |
+          import jenkins.model.Jenkins
+
+          def job = Jenkins.get().getItemByFullName('{{ jenkins_job_dsl_temp_job_name }}')
+          job.delete()
+      when: 
+        - jenkins_job_dsl_temp_job_delete
+        - jenkins_job_dsl_temp_job_is_running.output == 'false'
+
+    - name: reset Job DSL script security if it originally was on
+      jenkins_script:
+        url: "{{ jenkins_job_dsl_url }}"
+        user: "{{ jenkins_job_dsl_user }}"
+        password: "{{ jenkins_job_dsl_password }}"
+        script: |
+          import javaposse.jobdsl.plugin.GlobalJobDslSecurityConfiguration
+          import jenkins.model.GlobalConfiguration
+
+          GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).useScriptSecurity = true
+      when: job_dsl_script_security.output == 'true'
+  when: jenkins_job_dsl_temp_job_run
+  # block end
