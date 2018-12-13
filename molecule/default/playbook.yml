@@ -3,6 +3,10 @@
   hosts: all
 
   pre_tasks:
+    - name: start jenkins as background process
+      shell: nohup /usr/local/bin/jenkins.sh &
+      changed_when: false
+
     - name: wait for jenkins to start up before proceeding
       command: "curl -D - --silent --max-time 5 {{ jenkins_job_dsl_url }}/cli/"
       args:
