@@ -2,4 +2,4 @@
 - name: Converge
   hosts: all
   roles:
-    - role: jenkins-job-dsl-exec
+    - role: meierw.jenkins_job_dsl_exec
