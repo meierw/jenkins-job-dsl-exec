@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: meierw
   description: Creates, executes and then deletes a temporary Jenkins job containing a Job DSL script.

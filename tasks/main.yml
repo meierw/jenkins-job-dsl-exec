@@ -18,7 +18,7 @@
       job = Jenkins.get().createProject(hudson.model.FreeStyleProject, '{{ jenkins_job_dsl_temp_job_name }}')
       job.buildersList.add(builder)
       job.save()
-    
+
 - block:
     - name: temporarily disable Job DSL script security for this run
       jenkins_script:
@@ -34,7 +34,7 @@
           jobDslSecConfig.useScriptSecurity = false
           print initialValue
       register: job_dsl_script_security
-    
+
     - name: run temp job and execute Job DSL script
       jenkins_script:
         url: "{{ jenkins_job_dsl_url }}"
@@ -60,14 +60,14 @@
       until: jenkins_job_dsl_temp_job_is_running.output == 'false'
       delay: 1
       retries: "{{ jenkins_job_dsl_temp_job_running_checks }}"
-      ignore_errors: yes
+      ignore_errors: true
       when: jenkins_job_dsl_temp_job_delete
 
-    - debug: 
+    - debug:
         msg: >-
-          Temp job not deleted. Timed out while checking for the job to be finished. 
+          Temp job not deleted. Timed out while checking for the job to be finished.
           Consider raising the amount of jenkins_job_dsl_temp_job_running_checks.
-      when: 
+      when:
         - jenkins_job_dsl_temp_job_is_running.output is defined
         - jenkins_job_dsl_temp_job_is_running.output == 'true'
 
@@ -81,7 +81,7 @@
 
           def job = Jenkins.get().getItemByFullName('{{ jenkins_job_dsl_temp_job_name }}')
           job.delete()
-      when: 
+      when:
         - jenkins_job_dsl_temp_job_delete
         - jenkins_job_dsl_temp_job_is_running.output == 'false'
 
