@@ -13,8 +13,8 @@
         warn: false
       register: result
       until:
-        - (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1)
-        - (result.stdout.find("Please wait while") == -1)
+        - (result.stdout.find('403 Forbidden') != -1) or (result.stdout.find('200 OK') != -1)
+        - (result.stdout.find('Please wait while') == -1)
       retries: 60
       delay: 5
       changed_when: false

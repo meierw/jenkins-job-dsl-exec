@@ -19,7 +19,8 @@
       job.buildersList.add(builder)
       job.save()
 
-- block:
+- when: jenkins_job_dsl_temp_job_run
+  block:
     - name: temporarily disable Job DSL script security for this run
       jenkins_script:
         url: "{{ jenkins_job_dsl_url }}"
@@ -96,5 +97,4 @@
 
           GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).useScriptSecurity = true
       when: job_dsl_script_security.output == 'true'
-  when: jenkins_job_dsl_temp_job_run
   # block end
