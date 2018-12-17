@@ -1,6 +1,8 @@
 jenkins_job_dsl_exec
 ====================
 
+[![Build Status](https://travis-ci.com/meierw/jenkins-job-dsl-exec.svg?branch=master)](https://travis-ci.com/meierw/jenkins-job-dsl-exec)
+
 Ansible role, that creates, executes and then deletes a temporary Jenkins job containing a Job DSL script.
 
 Requirements
