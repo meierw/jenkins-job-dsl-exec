@@ -15,12 +15,8 @@ def test_jenkins(host):
 
 
 def get_script_curl_command(script_file):
-    script_dir = os.path.dirname(__file__) + '/scripts/'
-    script_content = open(script_dir + script_file, 'r').read()
-
-    # script passed in 'single quotes', so scripts themselves should avoid using them
     return (
         'curl -u admin:admin ' +
-        "--data-urlencode 'script=" + script_content + "' " +
+        '--data-urlencode "script=$(cat ' + os.environ['JENKINS_TEST_SCRIPT_DIR'] + '/' + script_file + ')" ' +
         'http://localhost:8080/scriptText'
     )

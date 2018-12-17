@@ -19,12 +19,14 @@ jenkins_job_dsl_password: admin
 ```
 The URL, username and password for authenticating with Jenkins. Will be used to execute `jenkins_script`.
 
+-------
 ```yaml
 jenkins_job_dsl_temp_job_name: C4lpe7GMX8S0pdZV6RWbKAkBfKWCPAOgAL9MGL03
 ```
 The name of the temporary job, which will be used for the DSL script execution.
 Should keep this as a complicated string of characters, to avoid collision with actual job names.
 
+-------
 ```yaml
 jenkins_job_dsl_content: |
     job('dsl-example-job') {
@@ -40,12 +42,14 @@ or us something like `jenkins_job_dsl_content: "{{ lookup('file', 'files/myDslSc
 This means that if your `jenkins_job_dsl_content` contains a `'''multiline string in three single quotes'''`, it will break things.
 Use a `"""multiline string in three double quotes"""` instead.
 
+-------
 ```yaml
 jenkins_job_dsl_temp_job_run: true
 ```
 Should the newly created temporary job be run.
 You may want to disable this if you have a different plan for when or how you want to run it.
 
+-------
 ```yaml
 jenkins_job_dsl_temp_job_delete: true
 ```
@@ -53,6 +57,7 @@ Should the temporary job be deleted after running it.
 You may want to disable this, if you're not getting the desired result and want to check out the build log in Jenkins.
 Does nothing if `jenkins_job_dsl_temp_job_run is false`.
 
+-------
 ```yaml
 jenkins_job_dsl_temp_job_running_checks: 10
 ```

@@ -1,4 +1,4 @@
-String bar = "foo"
+String bar = "foo bar"
 String hello = "hello world"
 String foo = "bar"
-println hello
+print hello

@@ -6,6 +6,7 @@ services:
 env:
   global:
     - ROLE_NAME: meierw.jenkins_job_dsl_exec
+    - JENKINS_TEST_SCRIPT_DIR: /usr/share/jenkins/ref/test_scripts
 
 install:
   - pip install molecule docker
