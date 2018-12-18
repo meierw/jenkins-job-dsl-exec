@@ -1,0 +1,1 @@
+print Jenkins.get().getItemByFullName('{{ new_job_name }}') ? true : false
