@@ -1,1 +1,0 @@
-print Jenkins.get().getItemByFullName('dsl-example-job') ? true : false
