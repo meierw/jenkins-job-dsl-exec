@@ -40,10 +40,6 @@ jenkins_job_dsl_content: |
 The DSL script, that will be run. You can specify it inline like in the example, 
 or us something like `jenkins_job_dsl_content: "{{ lookup('file', 'files/myDslScript.groovy') }}"` if you want your playbook to be more neat.
 
-> During runtime, `jenkins_job_dsl_content` is fed into a groovy script, like so - `builder.setScriptText('''{{ jenkins_job_dsl_content }}''')`.
-This means that if your `jenkins_job_dsl_content` contains a `'''multiline string in three single quotes'''`, it will break things.
-Use a `"""multiline string in three double quotes"""` instead.
-
 -------
 ```yaml
 jenkins_job_dsl_temp_job_run: true

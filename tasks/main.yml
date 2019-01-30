@@ -13,7 +13,7 @@
 
       def builder = new ExecuteDslScripts()
       builder.setUseScriptText(true)
-      builder.setScriptText('''{{ jenkins_job_dsl_content }}''')
+      builder.setScriptText(new String('{{ jenkins_job_dsl_content | b64encode }}'.decodeBase64()))
 
       job = Jenkins.get().createProject(hudson.model.FreeStyleProject, '{{ jenkins_job_dsl_temp_job_name }}')
       job.buildersList.add(builder)
